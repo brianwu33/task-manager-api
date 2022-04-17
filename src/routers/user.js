@@ -13,13 +13,12 @@ router.post("/users", async (req, res) => {
 	try {
 		await user.save();
 		const token = await user.generateAuthToken();
-		sendWelcomeEmail(user.email, user.name);
+		await sendWelcomeEmail(user.email, user.name);
 		res.status(201).send({ user, token });
 	} catch (e) {
+		console.log(e);
 		res.status(400).send(e);
 	}
-
-	console.log(req.body);
 });
 router.post("/users/login", async (req, res) => {
 	try {
@@ -86,7 +85,7 @@ router.patch("/users/me", auth, async (req, res) => {
 router.delete("/users/me", auth, async (req, res) => {
 	try {
 		await req.user.remove();
-		sendCancelationEmail(req.user.email, req.user.name);
+		await sendCancelationEmail(req.user.email, req.user.name);
 		res.send(req.user);
 	} catch (e) {
 		res.status(500).send();
